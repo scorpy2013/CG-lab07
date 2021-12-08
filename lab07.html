@@ -56,43 +56,29 @@
         }
     }
 
-    function HalfDivizion1(P0, P1, P2){
-        distance = Math.abs(-(P2[1] - P0[1])/(P2[0] - P0[0])*P1[0] + P1[1] + (P2[1] - P0[1])/(P2[0] - P0[0])*P0[0] + P0[1])/Math.sqrt((P2[1] - P0[1])/(P2[0] - P0[0])*(P2[1] - P0[1])/(P2[0] - P0[0]) + 1);
-        if(distance > 1){
-            P_ = [];
-            P__ = [];
-            P_[0] = 0.5*P0[0] + 0.5*P1[0];
-            P_[1] = 0.5*P0[1] + 0.5*P1[1];
-            P__[0] = 0.5*(0.5*P0[0] + 0.5*P1[0]) + 0.5*(0.5*P1[0] + 0.5*P2[0]);
-            P__[1] = 0.5*(0.5*P0[1] + 0.5*P1[1]) + 0.5*(0.5*P1[1] + 0.5*P2[1]);
-            drawLine(ctx, (0.5*P0[0] + 0.5*P1[0]), (0.5*P0[1] + 0.5*P1[1]),
-                (0.5*P1[0] + 0.5*P2[0]), (0.5*P1[1] + 0.5*P2[1]));
-            HalfDivizion1(P0, P_, P__);
-        }else{
-            drawLine(ctx, 0.5*P0[0] + 0.5*P1[0], 0.5*P0[1] + 0.5*P1[1],
-                0.5*P1[0] + 0.5*P2[0], 0.5*P1[1] + 0.5*P2[1]);
-        }
-    }
 
-    function HalfDivizion2(P0, P1, P2){
-        distance = Math.abs(-(P2[1] - P0[1])/(P2[0] - P0[0])*P1[0] + P1[1] + (P2[1] - P0[1])/(P2[0] - P0[0])*P0[0] + P0[1])/Math.sqrt((P2[1] - P0[1])/(P2[0] - P0[0])*(P2[1] - P0[1])/(P2[0] - P0[0]) + 1);
+    function HalfDivizion(P0, P1, P2, flag){
+        var distance = Math.abs(-(P2[1] - P0[1])/(P2[0] - P0[0])*
+            P1[0] + P1[1] + (P2[1] - P0[1])/(P2[0] - P0[0])*P0[0] + P0[1])/
+            Math.sqrt((P2[1] - P0[1])/(P2[0] - P0[0])*(P2[1] - P0[1])/(P2[0] - P0[0]) + 1);
         if(distance > 1){
-            P_ = [];
-            P_[0] = 0.5*P1[0] + 0.5*P2[0];
-            P_[1] = 0.5*P1[1] + 0.5*P2[1];
-            P__ = [];
-            P__[0] = 0.5*(0.5*P0[0] + 0.5*P1[0]) + 0.5*(0.5*P1[0] + 0.5*P2[0]);
-            P__[1] = 0.5*(0.5*P0[1] + 0.5*P1[1]) + 0.5*(0.5*P1[1] + 0.5*P2[1]);
-            drawLine(ctx, 0.5*P0[0] + 0.5*P1[0], 0.5*P0[1] + 0.5*P1[1],
-                0.5*P1[0] + 0.5*P2[0], 0.5*P1[1] + 0.5*P2[1]);
-            HalfDivizion2(P__, P_, P2);
+            P0_ = [], P0__ = [], P1_ = [];
+            P0_[0] = 0.5*P0[0] + 0.5*P1[0];
+            P0_[1] = 0.5*P0[1] + 0.5*P1[1];
+            P1_[0] = 0.5*P1[0] + 0.5*P2[0];
+            P1_[1] = 0.5*P1[1] + 0.5*P2[1];
+            P0__[0] = 0.5*P0_[0] + 0.5*P1_[0];
+            P0__[1] = 0.5*P0_[1] + 0.5*P1_[1];
+            drawLine(ctx, P0_[0], P0_[1], P1_[0], P1_[1]);
+            if(flag == true) HalfDivizion(P0, P0_, P0__, flag);
+            if(flag == false) HalfDivizion(P0__, P1_, P2, flag);
         }else{
-            drawLine(ctx, 0.5*P0[0] + 0.5*P1[0], 0.5*P0[1] + 0.5*P1[1],
-                0.5*P1[0] + 0.5*P2[0], 0.5*P1[1] + 0.5*P2[1]);
+            drawLine(ctx, P0_[0], P0_[1], P1_[0], P1_[1]);
         }
     }
 
     canvas.addEventListener("click", function(foo){
+        var flag = true
         if (status == 0) {
             points[kol] = [foo.offsetX, foo.offsetY];
             status = 1;
@@ -109,8 +95,9 @@
 
         }else if(status == -1){
             status = -2;
-            HalfDivizion1(points[0], points[1], points[2]);
-            HalfDivizion2(points[0], points[1], points[2]);
+            HalfDivizion(points[0], points[1], points[2], flag);
+            flag = false;
+            HalfDivizion(points[0], points[1], points[2], flag);
         }else if(status == -2){
             status = 0;
             kol = -1;
